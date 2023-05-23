@@ -9,10 +9,15 @@ const PORT =  4001;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Request-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, body");
   next();
 });
 
+
+app.use(express.json({ type: '*/*' })); 
   app.get('/projects/:pattern', (req, res, next) => {
     const pattern = req.params.pattern;
     console.log('Request received');
@@ -32,6 +37,31 @@ app.use(function(req, res, next) {
     res.send(data.data);
     console.log('data sent');
   });
+
+  app.put('/projects/:id', (req, res, next) => {
+
+    console.log('Add request recived');
+  const projectId = req.params.id;
+
+  let project;
+  data.data.forEach(proj => {
+    if (proj.id == projectId)
+    {
+      project = proj;
+    }
+  });
+  if (project) {
+    if(req.body)
+    {
+      project.groups.push(req.body);
+    }
+    console.log("Add complete")
+    res.status(200).send()
+  } 
+  else {
+    res.status(404).send();
+  }
+});
 
 
 app.listen(PORT, () => {
@@ -79,3 +109,5 @@ app.listen(PORT, () => {
     closing = '</mark>'
     return opening+pattern+closing;
   }
+
+  
